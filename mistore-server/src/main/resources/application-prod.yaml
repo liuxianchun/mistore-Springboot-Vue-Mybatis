@@ -3,7 +3,7 @@
 server:
   port: 7000
   servlet:
-    context-path: /mistore
+    context-path: /
 
 spring:
   resources:
@@ -14,6 +14,7 @@ spring:
       cache: true
       enabled: true
       compressed: true   #启用压缩资源解析
+
 
   datasource:
     url: jdbc:mysql://47.98.145.198:3306/mistore?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useAffectedRows=true

@@ -15,7 +15,7 @@ import java.util.Map;
  * @date 2021/1/24
  * redis相关的定时任务
  */
-//@Component
+@Component
 @Slf4j
 public class RedisSchedule {
 
@@ -31,7 +31,7 @@ public class RedisSchedule {
     @Scheduled(cron = "0 0 0 * * ?")   //每天执行一次
     public void syncSales(){
         Map<Object, Object> sales = redisTemplate.opsForHash().entries("sales_num");
-        redisTemplate.opsForHash().putAll("sales_num",null);
+        redisTemplate.delete("sales_num");
         for(Object product_id:sales.keySet()){
             productDao.updateSales(Integer.parseInt(product_id+""), (int) sales.get(product_id));
         }
@@ -41,7 +41,7 @@ public class RedisSchedule {
     @Scheduled(cron = "0 0 0 * * ?")   //每天执行一次
     public void syncLoginCount(){
         Map<Object, Object> login_count = redisTemplate.opsForHash().entries("login_count");
-        redisTemplate.opsForHash().putAll("login_count",null);
+        redisTemplate.delete("login_count");
         for(Object username:login_count.keySet()){
             userDao.updateLoginCount((String)username, (int) login_count.get(username));
         }
