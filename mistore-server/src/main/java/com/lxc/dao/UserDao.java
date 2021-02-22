@@ -38,6 +38,6 @@ public interface UserDao {
     @Select("select * from users where username=#{userName}")
     User findByUserName(String userName);
 
-    @Update("update user set login_count=login_count+#{count} where username=#{username}")
+    @Update("update users set login_count=login_count+#{count} where username=#{username}")
     void updateLoginCount(String username,int count);
 }

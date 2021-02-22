@@ -77,7 +77,7 @@
 - 在mistore所在目录控制台输入 npm run serve
 - 项目运行需连接redis，否则会报错
 
-##截图
+## 截图
 
 
 

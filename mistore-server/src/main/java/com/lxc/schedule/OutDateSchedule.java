@@ -3,6 +3,7 @@ package com.lxc.schedule;
 import com.lxc.dao.ScheduleDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,9 @@ public class OutDateSchedule {
     @Autowired
     private ScheduleDao scheduleDao;
 
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+
     /*处理失效订单*/
     @Scheduled(cron = "0 0/10 * * * ?")   //每10分钟执行一次
     public void handleOrder(){
@@ -29,6 +33,8 @@ public class OutDateSchedule {
     @Scheduled(cron = "0 0 0/1 * * ?")   //每小时执行一次
     public void handleSecGood(){
         int count = scheduleDao.handleSecGood();
+        redisTemplate.delete("secgood");
+        redisTemplate.delete("secgoods");
         log.info("处理失效的秒杀商品共"+count+"件");
     }
 
