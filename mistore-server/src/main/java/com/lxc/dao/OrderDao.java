@@ -17,7 +17,7 @@ import java.util.List;
 public interface OrderDao {
 
     /*从购物车结算*/
-    @Insert("insert into orders(order_id,user_id,product_id,product_num,product_price,order_time,pay_time) values(#{order_id},#{user_id},#{product_id},#{product_num},#{product_price},now(),now())")
+    @Insert("insert into orders(order_id,user_id,product_id,product_num,product_price,order_time,pay_time,status) values(#{order_id},#{user_id},#{product_id},#{product_num},#{product_price},now(),now(),1)")
     void addOrder(Long order_id,int user_id, int product_id, int product_num, BigDecimal product_price);
 
     @Select("select * from orders where order_id=#{order_id}")
