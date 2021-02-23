@@ -33,6 +33,7 @@ public class OutDateSchedule {
     @Scheduled(cron = "0 0 0/1 * * ?")   //每小时执行一次
     public void handleSecGood(){
         int count = scheduleDao.handleSecGood();
+        //清理redis
         redisTemplate.delete("secgood");
         redisTemplate.delete("secgoods");
         log.info("处理失效的秒杀商品共"+count+"件");

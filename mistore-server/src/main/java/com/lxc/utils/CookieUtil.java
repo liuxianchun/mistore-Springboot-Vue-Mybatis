@@ -78,6 +78,9 @@ public class CookieUtil {
             final String[] domains = serverName.split("\\.");
             int len = domains.length;
             if (len > 3) {
+                if(!domains[0].equals("www")){
+                    domainName = serverName;
+                }else
                 // www.xxx.com.cn
                 domainName = domains[len - 3] + "." + domains[len - 2] + "." + domains[len - 1];
             } else if (len <= 3 && len > 1) {
