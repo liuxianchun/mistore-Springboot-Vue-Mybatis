@@ -1,4 +1,4 @@
-/*
+﻿/*
  Navicat Premium Data Transfer
 
  Source Server         : mysql
@@ -485,13 +485,9 @@ delimiter ;
 -- ----------------------------
 -- Event structure for ClearSequence
 -- ----------------------------
-DROP EVENT IF EXISTS `ClearSequence`;
-delimiter ;;
-CREATE EVENT `ClearSequence`
-ON SCHEDULE
-EVERY '1' DAY STARTS '2021-01-23 13:25:44'
-DO UPDATE sequence SET value=0
-;;
-delimiter ;
+CREATE EVENT ClearSequence  
+    ON SCHEDULE EVERY 1 DAY   
+    DO  
+    UPDATE sequence SET value=0;
 
 SET FOREIGN_KEY_CHECKS = 1;
