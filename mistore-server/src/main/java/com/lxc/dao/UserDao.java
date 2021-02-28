@@ -26,7 +26,7 @@ public interface UserDao {
     @Select("select count(1) from users where user_id=#{user_id}")
     int findUserById(Integer user_id);
 
-    @Insert("insert into users(userName,password,salt,login_count) values(#{userName},#{password},#{salt},1)")
+    @Insert("insert into users(userName,password,salt,register_time,login_count) values(#{userName},#{password},#{salt},now(),1)")
     void registerUser(String userName,String password,String salt);
 
     @Update("update users set password=#{password},userPhoneNumber=#{userPhoneNumber},email=#{email},gender=#{gender}")
