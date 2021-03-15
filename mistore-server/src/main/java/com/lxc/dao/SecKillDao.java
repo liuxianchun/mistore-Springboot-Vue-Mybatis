@@ -27,8 +27,11 @@ public interface SecKillDao {
     })
     List<SecGood> getSecGoods();
 
+    @Select("select product_id from secgoods where id=#{secgood_id}")
+    int getProductIdById(int secgood_id);
+
     /*获得单个秒杀商品信息*/
-    @Select("select * from secgoods where product_id=#{productID} and status=1")
+    @Select("select * from secgoods where status=1 and product_id=#{product_id}")
     @Results(id="getSecGood",value = {
             @Result(property = "id",column = "id"),@Result(property = "product_id",column = "product_id"),
             @Result(property = "start_date",column = "start_date"),@Result(property = "end_date",column = "end_date"),
@@ -36,7 +39,10 @@ public interface SecKillDao {
             @Result(property = "detail",column = "product_id",
                     one=@One(select="com.lxc.dao.ProductDao.getProductByID",fetchType = FetchType.EAGER))
     })
-    SecGood getSecGood(Integer productID);
+    SecGood getSecGood(Integer product_id);
+
+    @Select("select id from secgoods where product_id=#{product_id} limit 1")
+    Integer getSecId(int product_id);
 
     /*是否已抢购*/
     @Select("select count(1) from secorder where user_id=#{user_id} and product_id=#{product_id} and secgoods_id=#{secgoods_id}")

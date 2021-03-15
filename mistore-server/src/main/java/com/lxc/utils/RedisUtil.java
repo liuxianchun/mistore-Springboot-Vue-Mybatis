@@ -1,6 +1,7 @@
 package com.lxc.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisTemplate<String,Object> redisTemplate;
 
 
     // Key（键），简单的key-value操作
@@ -146,8 +147,8 @@ public class RedisUtil {
      * @param field
      * @return
      */
-    public String hget(String key, String field) {
-        return (String) redisTemplate.opsForHash().get(key, field);
+    public Object hget(String key, String field) {
+        return redisTemplate.opsForHash().get(key, field);
     }
 
     /**

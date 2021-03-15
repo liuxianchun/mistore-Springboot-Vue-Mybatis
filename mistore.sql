@@ -92,6 +92,7 @@ CREATE TABLE `orders`  (
   `order_time` datetime(0) NOT NULL,
   `order_id` bigint(20) NULL DEFAULT NULL,
   `pay_time` datetime(0) NULL DEFAULT NULL COMMENT '付款时间',
+  `pay_status` int(2) NULL DEFAULT NULL COMMENT '0为未付款,1为已付款',
   `status` int(11) NULL DEFAULT NULL COMMENT '0为失效,1为生效',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `FK_order_user_id`(`user_id`) USING BTREE,

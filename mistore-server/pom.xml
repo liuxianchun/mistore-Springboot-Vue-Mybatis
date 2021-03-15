@@ -81,7 +81,15 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.60</version>
         </dependency>
-
+        <!--rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

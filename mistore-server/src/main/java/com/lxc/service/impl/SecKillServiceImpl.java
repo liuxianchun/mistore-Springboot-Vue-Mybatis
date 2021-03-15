@@ -1,15 +1,19 @@
 package com.lxc.service.impl;
 
 import com.lxc.dao.OrderDao;
+import com.lxc.dao.ProductDao;
 import com.lxc.dao.SecKillDao;
 import com.lxc.dao.UserDao;
 import com.lxc.entity.SecGood;
 import com.lxc.service.SecKillService;
+import com.lxc.utils.RedisUtil;
+import com.lxc.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +28,9 @@ public class SecKillServiceImpl implements SecKillService {
     private SecKillDao secKillDao;
 
     @Autowired
+    private ProductDao productDao;
+
+    @Autowired
     private OrderDao orderDao;
 
     @Autowired
@@ -31,6 +38,9 @@ public class SecKillServiceImpl implements SecKillService {
     
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public List<SecGood> getSecGoods() {
@@ -47,13 +57,17 @@ public class SecKillServiceImpl implements SecKillService {
     public SecGood getSecGood(Integer productID) {
         if(null==productID)
             return null;
+        Integer secgood_id = secKillDao.getSecId(productID);
+        if(secgood_id==null)
+            return null;
         Map<Object, Object> secgood = redisTemplate.opsForHash().entries("secgood");
-        if(secgood.isEmpty()||secgood.get(productID)==null){
+
+        if(secgood.isEmpty()||secgood.get(secgood_id)==null){
             SecGood secGood = secKillDao.getSecGood(productID);
-            secgood.put(productID+"",secGood);
+            secgood.put(secgood_id+"",secGood);
             redisTemplate.opsForHash().putAll("secgood",secgood);
         }
-        return (SecGood) secgood.get(productID+"");
+        return (SecGood) secgood.get(secgood_id+"");
     }
 
     @Override
@@ -66,6 +80,30 @@ public class SecKillServiceImpl implements SecKillService {
         }else{
            return  decreaseSecGoodsStock(secgoods_id,user_id,product_id);
         }
+    }
+
+    @Override
+    public boolean isInSecKill(int secgoods_id) {
+        SecGood secgood = (SecGood) redisUtil.hget("secgood", secgoods_id + "");
+        if(secgood==null) {
+            int product_id = secKillDao.getProductIdById(secgoods_id);
+            SecGood good = secKillDao.getSecGood(product_id);
+            redisUtil.hset("secgood",secgoods_id+"",good);
+            secgood = good;
+        }
+        Date start_date = secgood.getStart_date();
+        Date end_date = secgood.getEnd_date();
+        Date now = new Date();
+        return !now.before(start_date) && !now.after(end_date);
+    }
+
+    @Override
+    public Map getSecResult(int user_id, int product_id) {
+        Integer secgoods_id = secKillDao.getSecId(product_id);
+        String secOrder = redisUtil.get("secOrder:"+secgoods_id+":"+user_id);
+        if("success".equals(secOrder))
+            return RespBeanEnum.ORDER_SUCCESS.getMap();
+        return RespBeanEnum.SECORDER_NOTFOUND.getMap();
     }
 
     private int decreaseSecGoodsStock(int secgoods_id,int user_id,int product_id){

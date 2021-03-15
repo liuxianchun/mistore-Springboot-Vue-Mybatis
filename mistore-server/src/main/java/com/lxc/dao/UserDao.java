@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface UserDao {
 
-    @Select("select * from users where userName=#{userName} and password=#{password}")
+    @Select("select user_id,userName,userPhoneNumber,email,gender from users where userName=#{userName} and password=#{password}")
     User login(String userName,String password);
 
     @Select("select count(1) from users where userName=#{username}")

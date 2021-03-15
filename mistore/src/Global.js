@@ -7,8 +7,8 @@
  */
 let base = {};
 base.install = function (Vue) {
-  Vue.prototype.$target = "http://47.98.145.198:7000/"; // 线上后端地址
-  //Vue.prototype.$target = "http://localhost:7000/mistore/"; // 本地后端地址
+  //Vue.prototype.$target = "http://47.98.145.198:7000/"; // 线上后端地址
+  Vue.prototype.$target = "http://localhost:7000/"; // 本地后端地址
 
   // 封装提示成功的弹出框
   Vue.prototype.notifySucceed = function (msg) {

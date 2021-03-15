@@ -106,7 +106,7 @@ export default {
       secgood: '', // 秒杀商品详细信息
       productPicture: '', // 商品图片
       status: '',   //秒杀活动状态：0未开始，1进行中，-1已结束
-      remain: 0   //距离秒杀开始时间
+      remain: 0 ,  //距离秒杀开始时间
     };
   },
   // 通过路由获取商品id
@@ -160,12 +160,8 @@ export default {
         }
       },1000);
     },
-    //清除定时器
-    clearTimer(){
-      clearInterval(this.timer);
-      this.timer = null;
-    },
-    // 获取商品详细信息
+
+// 获取商品详细信息
     getDetails(val) {
       this.$axios
         .post("seckill/getDetails", {
@@ -221,6 +217,24 @@ export default {
               // 抢购成功
              // this.unshiftShoppingCart(res.data.shoppingCartData[0]);
               this.notifySucceed(res.data.msg);
+              this.timer = setInterval(() => {
+                this.$axios
+                    .post("seckill/getSecKillResult",{
+                      user_id:this.$store.getters.getUser.user_id,
+                      product_id: this.productID
+                    },{withCredentials:true})
+                    .then(res=>{
+                      if(res.data.code==="001"){
+                        this.notifySucceed(res.data.msg);
+                        //请求成功，关闭定时器
+                        clearInterval(this.timer);
+                        this.timer = null;
+                      }
+                    })
+                    .catch(err => {
+                      return Promise.reject(err);
+                    })
+              },1000);
               break;
               // 抢购失败
             default:
@@ -230,6 +244,9 @@ export default {
         .catch(err => {
           return Promise.reject(err);
         });
+    },
+    getSecKillResult(){
+
     },
     addCollect() {
       // 判断是否登录,没有登录则显示登录组件

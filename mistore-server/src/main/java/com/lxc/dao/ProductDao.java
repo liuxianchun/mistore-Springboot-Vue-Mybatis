@@ -28,6 +28,9 @@ public interface ProductDao {
     @Select("select * from product where product_id=#{product_id}")
     Product getProductByID(int product_id);
 
+    @Select("select p.* from product p,secgoods sec where sec.product_id=p.product_id and sec.id=#{secgood_id}")
+    Product getProductBySecID(int secgood_id);
+
     @Select("select category_id from category")
     List getCategory_id();
 

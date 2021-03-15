@@ -1,13 +1,17 @@
 package com.lxc.schedule;
 
 import com.lxc.dao.ProductDao;
+import com.lxc.dao.SecKillDao;
 import com.lxc.dao.UserDao;
+import com.lxc.entity.SecGood;
+import com.lxc.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +27,13 @@ public class RedisSchedule {
     private RedisTemplate<String,Object> redisTemplate;
 
     @Autowired
+    private RedisUtil redisUtil;
+
+    @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private SecKillDao secKillDao;
 
     @Autowired
     private UserDao userDao;
@@ -46,6 +56,18 @@ public class RedisSchedule {
             userDao.updateLoginCount((String)username, (int) login_count.get(username));
         }
         log.info("更新用户登录次数完成");
+    }
+
+    @Scheduled(cron = "0 * * * * ?")   //每天每时05分，更新秒杀库存
+    public void syncSecStock(){
+        List<SecGood> secGoods = secKillDao.getSecGoods();
+        for(SecGood good:secGoods){   //未存入redis，则存入redis
+            if(redisUtil.hget("secStock",good.getId()+"")==null){
+                redisUtil.hset("secStock",good.getId()+"",good.getGoods_stock());
+                log.info("更新Redis秒杀商品库存完成");
+            }
+        }
+
     }
 
 }

@@ -1,21 +1,34 @@
 package com.lxc.utils;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.StringUtils;
-import org.slf4j.LoggerFactory;
+import com.lxc.vo.RespBeanEnum;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Map;
 
 /**
  * @author liuxianchun
  * @date 2021/2/4
  */
 public class CookieUtil {
+
+    /*校验是否登录*/
+    public static Map validateLogin(HttpServletRequest req){
+        String ip = CookieUtil.getIp(req);
+        System.out.println("ip:"+ip);
+        String ticket = getCookieValue(req, "userTicket", false);
+        if(StringUtils.isEmpty(ticket)||req.getSession().getAttribute(ticket)==null){
+            return RespBeanEnum.WITHOUT_LOGIN.getMap();
+        }else
+            return null;
+    }
+
     public static String getCookieValue(HttpServletRequest request, String cookieName, boolean isDecoder) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null || cookieName == null){
@@ -40,7 +53,7 @@ public class CookieUtil {
     }
 
 
-    public static   void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieValue, int cookieMaxage, boolean isEncode) {
+    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieValue, int cookieMaxage, boolean isEncode) {
         try {
             if (cookieValue == null) {
                 cookieValue = "";
@@ -101,4 +114,25 @@ public class CookieUtil {
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String cookieName) {
         setCookie(request, response, cookieName, null, 0, false);
     }
+
+    /*从请求中获得ip*/
+    public static String getIp(HttpServletRequest request){
+        String ip = request.getHeader("X-Real-IP");
+        if (!StringUtils.isEmpty(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        ip = request.getHeader("X-Forwarded-For");
+        if (!StringUtils.isEmpty(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            // 多次反向代理后会有多个IP值，第一个为真实IP。
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                return ip.substring(0, index);
+            } else {
+                return ip;
+            }
+        } else {
+            return request.getRemoteAddr();
+        }
+    }
+
 }

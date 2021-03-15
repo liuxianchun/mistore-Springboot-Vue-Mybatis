@@ -12,13 +12,14 @@
 ## 项目简介
 
 本项目前后端分离，mistore为前端部分，mistore-server为后端部分。密码使用双重MD5加密，使用redis来储存商品信息和用户session，同时记录用户登录次数、
-商品销量等。实现秒杀功能，保证数据在高并发场景下的正确性，启用定时任务定时处理过期秒杀商品、过期未付款订单，并每天同步redis中的登录次数、商品销量到mysql中。
+商品销量等。实现秒杀功能，启用定时任务定时处理过期秒杀商品、过期未付款订单，并每天同步redis中的登录次数、商品销量到mysql中。同时，使用Redis进行秒
+杀库存控制，使用RabbitMQ异步秒杀，能够较好的应对并发场景，客户端完成秒杀请求后每秒请求一次秒杀结果。
 
 ## 技术栈
 
 - **前端：**`Vue`+`Vue-router`+`Vuex`+`Element-ui`+`Axios`
 
-- **后端：**`SpringBoot`+`Mybatis`+`Spring`
+- **后端：**`SpringBoot`+`Mybatis`+`Spring`+`RabbitMQ`
 
 - **数据库：**`Mysql`+`Redis`
 
@@ -78,9 +79,6 @@
 - 项目运行需连接redis，否则会报错
 
 ## 截图
-![](https://github.com/liuxianchun/mistore/blob/main/img/1.JPG)
-![](https://github.com/liuxianchun/mistore/blob/main/img/2.JPG)
-![](https://github.com/liuxianchun/mistore/blob/main/img/3.JPG)
 
 
 
