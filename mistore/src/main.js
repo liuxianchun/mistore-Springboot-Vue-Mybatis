@@ -19,8 +19,8 @@ import Global from './Global';
 Vue.use(Global);
 
 import Axios from 'axios';
-//Axios.defaults.baseURL='http://47.98.145.198:7000/';
-Axios.defaults.baseURL='http://localhost:7000/';
+Axios.defaults.baseURL='http://47.98.145.198:7000/';
+//Axios.defaults.baseURL='http://localhost:7000/';
 Axios.defaults.withCredentials = true;
 Vue.use(Axios);
 Vue.prototype.$axios = Axios;
