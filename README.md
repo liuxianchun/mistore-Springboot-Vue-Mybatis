@@ -79,7 +79,9 @@
 - 项目运行需连接redis，否则会报错
 
 ## 截图
-
+![](https://github.com/liuxianchun/mistore/blob/main/img/1.JPG)
+![](https://github.com/liuxianchun/mistore/blob/main/img/2.JPG)
+![](https://github.com/liuxianchun/mistore/blob/main/img/3.JPG)
 
 
 **作者** [liuxianchun](https://github.com/liuxianchun)
