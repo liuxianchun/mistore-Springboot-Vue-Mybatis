@@ -55,4 +55,13 @@ public class MessageSender {
         rabbitTemplate.convertAndSend(RabbitMQConfig.SECORDER_EXCHANGE,"seckill",message,correlationData);
     }
 
+    //数据库减库存操作失败，进行补库存
+    public void sendAddSecStock(int secgoods_id){
+        Message<Integer> message = MessageBuilder.createMessage(secgoods_id, new MessageHeaders(null));
+        CorrelationData correlationData = new CorrelationData();
+        rabbitTemplate.setConfirmCallback(confirmCallback);
+        rabbitTemplate.setReturnsCallback(returnsCallback);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.SECORDER_EXCHANGE,"addSecStock",message,correlationData);
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.lxc.mistoreserver;
 
 import com.lxc.dao.ScheduleDao;
+import com.lxc.dao.SecKillDao;
+import com.lxc.entity.SecGood;
 import com.lxc.schedule.OutDateSchedule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class test1 {
 
     @Autowired
     private ScheduleDao scheduleDao;
+
+    @Autowired
+    private SecKillDao secKillDao;
 
     @Test
     void test1() throws IOException {
@@ -44,6 +49,14 @@ public class test1 {
             fw.write(1017+i+",2,5\n");
             fw.write(1017+i+",3,15\n");
             fw.write(1017+i+",4,9\n");
+        }
+    }
+
+    @Test
+    void test3(){
+        List<SecGood> secGoods = secKillDao.getSecGoods();
+        for(SecGood secGood:secGoods){
+            System.out.println(secGood.getId()+","+secGood.getDetail());
         }
     }
 }

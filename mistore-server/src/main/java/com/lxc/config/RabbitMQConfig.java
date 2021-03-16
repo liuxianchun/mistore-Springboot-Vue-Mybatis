@@ -22,12 +22,12 @@ public class RabbitMQConfig {
 
     /*秒杀派单队列*/
     public static final String SECORDER_DIR_QUEUE = "secorder_dir_queue";
-    /*秒杀补单队列*/
-    public static final String SECORDER_CREATE_QUEUE = "secorder_create_queue";
+    /*秒杀补库存队列*/
+    public static final String SEC_ADDSTOCK_QUEUE = "secorder_create_queue";
     /*秒杀订单交换机*/
     public static final String SECORDER_EXCHANGE = "secorder_exchange";
-    /*秒杀订单补单交换机*/
-    public static final String SECORDER_CREATE_EXCHANGE = "secorder_create_exchange";
+    /*秒杀补库存交换机*/
+    public static final String SEC_ADDSTOCK_EXCHANGE = "secorder_create_exchange";
 
     //创建初始化RabbitAdmin对象
     @Bean
@@ -38,6 +38,7 @@ public class RabbitMQConfig {
         return rabbitAdmin;
     }
 
+    //死信队列
     @Bean
     public Queue DeadQueue(){
         return new Queue(DEAD_QUEUE,true,false,false,null);
@@ -57,19 +58,14 @@ public class RabbitMQConfig {
                 .and(null);
     }
 
+
+    //派单队列
     @Bean
     public Queue DirSecOrderQueue(){
         HashMap<String, Object> props = new HashMap<>();
         props.put("x-message-ttl",30000);  //30s
         props.put("x-max-length",10000);   //队列最大长度
         return new Queue(SECORDER_DIR_QUEUE,true,false,false,props);
-    }
-
-    @Bean
-    public Queue CreateSecOrderQueue(){
-        HashMap<String, Object> props = new HashMap<>();
-        props.put("x-dead-exchange",DEAD_EXCHANGE);  //死信交换机
-        return new Queue(SECORDER_CREATE_QUEUE,true,false,false,props);
     }
 
     @Bean
@@ -85,4 +81,27 @@ public class RabbitMQConfig {
                 .with("seckill")
                 .and(null);
     }
+
+    //补库存队列
+    @Bean
+    public Queue SecAddStockQueue(){
+        HashMap<String, Object> props = new HashMap<>();
+        props.put("x-dead-exchange",DEAD_EXCHANGE);  //死信交换机
+        return new Queue(SEC_ADDSTOCK_QUEUE,true,false,false,props);
+    }
+
+    @Bean
+    public Exchange SecAddStockExchange(){
+        return new DirectExchange(SEC_ADDSTOCK_EXCHANGE,true,false,null);
+    }
+
+    @Bean
+    public Binding bindingSecAddStock(){
+        return BindingBuilder
+                .bind(SecAddStockQueue())
+                .to(SecAddStockExchange())
+                .with("addSecStock")
+                .and(null);
+    }
+
 }

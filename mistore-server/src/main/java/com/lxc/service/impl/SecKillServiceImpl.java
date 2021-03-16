@@ -5,12 +5,14 @@ import com.lxc.dao.ProductDao;
 import com.lxc.dao.SecKillDao;
 import com.lxc.dao.UserDao;
 import com.lxc.entity.SecGood;
+import com.lxc.mq.MessageSender;
 import com.lxc.service.SecKillService;
 import com.lxc.utils.RedisUtil;
 import com.lxc.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -28,9 +30,6 @@ public class SecKillServiceImpl implements SecKillService {
     private SecKillDao secKillDao;
 
     @Autowired
-    private ProductDao productDao;
-
-    @Autowired
     private OrderDao orderDao;
 
     @Autowired
@@ -41,6 +40,9 @@ public class SecKillServiceImpl implements SecKillService {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private MessageSender sender;
 
     @Override
     public List<SecGood> getSecGoods() {
@@ -106,7 +108,10 @@ public class SecKillServiceImpl implements SecKillService {
         return RespBeanEnum.SECORDER_NOTFOUND.getMap();
     }
 
-    private int decreaseSecGoodsStock(int secgoods_id,int user_id,int product_id){
+    //开启事务
+    @Transactional
+    @Override
+    public int decreaseSecGoodsStock(int secgoods_id, int user_id, int product_id){
         BigDecimal secGoodPrice = secKillDao.findSecGoodPrice(secgoods_id);   //符合条件的价格
         if(null!=secGoodPrice&&userDao.findUserById(user_id)>0){
             int decreStock =  secKillDao.decreaseSecGoodsStock(secgoods_id);  //尝试减库存
@@ -117,6 +122,8 @@ public class SecKillServiceImpl implements SecKillService {
                 //生成秒杀订单
                 secKillDao.addSecKillOrder(secgoods_id,order_id,user_id,product_id);
                 return 1;   //抢购成功
+            }else{
+                sender.sendAddSecStock(secgoods_id);
             }
         }
         return 0;   //抢购失败

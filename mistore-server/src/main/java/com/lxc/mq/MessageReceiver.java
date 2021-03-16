@@ -51,6 +51,26 @@ public class MessageReceiver {
         }
     }
 
+    /*补库存队列*/
+    @RabbitListener(queues = {RabbitMQConfig.SEC_ADDSTOCK_QUEUE})
+    @RabbitHandler
+    public void addSecStock(Message message, Channel channel){
+        try {
+            channel.basicQos(0,1,true);
+            long delivery_tag = (long) message.getHeaders().get(AmqpHeaders.DELIVERY_TAG);
+            int secgoods_id = (int) message.getPayload();
+            synchronized (this){
+                int secStock = (int) redisUtil.hget("secStock", secgoods_id + "");
+                redisUtil.hset("secStock",secgoods_id+"",secStock+1);
+            }
+            channel.basicAck(delivery_tag,false);
+            log.info("补充redis库存成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /*死信队列*/
     @RabbitListener(queues = {RabbitMQConfig.DEAD_QUEUE})
     @RabbitHandler

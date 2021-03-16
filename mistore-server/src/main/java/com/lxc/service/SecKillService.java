@@ -24,4 +24,6 @@ public interface SecKillService {
 
     Map getSecResult(int user_id, int secgoods_id);
 
+    int decreaseSecGoodsStock(int secgoods_id, int user_id, int product_id);
+
 }
