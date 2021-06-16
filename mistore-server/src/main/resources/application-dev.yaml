@@ -1,7 +1,19 @@
 #开发环境配置
 
 server:
-  port: 7000
+  #https
+  port: 7001
+  #http
+  httpPort: 7000
+  ssl:
+    key-store: classpath:tomcat.keystore
+    key-store-password: liuxianchun
+    key-store-type: JKS
+    enabled: true
+    key-password: liuxianchun
+    #别名
+    key-alias: tomcat
+
   servlet:
     context-path: /
 
